@@ -4,7 +4,7 @@ const admin = 'id'
 const bot = new Telegraf('6203577637:')
 
 bot.start(async (ctx) => {
-    ctx.reply(`*GET OWN ID: *send me any message\n*GET CHANNEL ID:* forward me any message from channel\n*GET ANOTHER PERSON ID:* forward me any message from another person\n*GET GROUP ID: *add the bot to the group and send /getgroupid command
+    ctx.reply(`*GET OWN ID: *send me any message\n*GET CHANNEL ID:* forward me any message from channel\n*GET ANOTHER PERSON ID:* forward me any message from another person\n*GET GROUP ID: *add the bot to the group and send /getgroupid command\n*FIND USER WITH ID:* \\#finduser ID \\- ex: \\#finduser 1234567
 `, { parse_mode: 'MarkdownV2' })
 
 
@@ -20,6 +20,11 @@ bot.command('/getgroupid', ctx => {
     } else {
         ctx.reply(`this command only works in a group add the bot to the group then send the command there`)
     }
+
+})
+bot.hashtag('#finduser', (ctx) => {
+    let id = ctx.message.text.split(' ')[1]
+    bot.telegram.sendMessage(ctx.from.id, `USER secret link: [USER SECRET LINK](tg://user?id=${id})\n\nif the link does not work, then there is no such person`, { parse_mode: 'MarkdownV2' })
 })
 bot.on('text', (ctx) => {
     if (ctx.message.text == '/users') {

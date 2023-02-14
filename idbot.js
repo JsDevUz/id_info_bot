@@ -1,15 +1,36 @@
 const { Telegraf } = require('telegraf')
+const fs = require('fs')
+const admin = 'id'
+const bot = new Telegraf('6203577637:')
 
-const bot = new Telegraf('6203577637:AAGlWoXbu8itP8LGeHKpAmwIvFP9SPDugEA')
+bot.start(async (ctx) => {
+    ctx.reply(`*GET OWN ID: *send me any message\n*GET CHANNEL ID:* forward me any message from channel\n*GET ANOTHER PERSON ID:* forward me any message from another person\n*GET GROUP ID: *add the bot to the group and send /getgroupid command
+`, { parse_mode: 'MarkdownV2' })
 
-bot.start(async (ctx) => ctx.reply('hi'))
+
+    fs.readFile(`./users.txt`, 'utf8', (err, data) => {
+        if (!(data.indexOf(ctx.chat.id) + 1) || data.length == 0) {
+            fs.writeFile('./users.txt', `${data}\n${ctx.chat.id}`, () => { });
+        }
+    });
+})
 bot.command('/getgroupid', ctx => {
     if (ctx.message.chat.type == 'group') {
         ctx.reply(`GROUP ID: ${ctx.message.chat.id}`)
+    } else {
+        ctx.reply(`this command only works in a group add the bot to the group then send the command there`)
     }
 })
 bot.on('text', (ctx) => {
-    console.log(ctx.message.chat);
+    if (ctx.message.text == '/users') {
+        if (ctx.chat.id == admin) {
+            fs.readFile(`./users.txt`, 'utf8', (err, data) => {
+                bot.telegram.sendMessage(ctx.chat.id, `Foydalanuvchilar soni ${data.split('\n').length} ta`)
+            });
+            return
+        }
+    }
+
     if (ctx.message.chat.type == 'group' && ctx.message.text == '') {
         ctx.reply(ctx.message.chat)
     }
